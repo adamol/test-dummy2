@@ -2,18 +2,19 @@
 
 namespace App\Factories;
 
-// use App\Utilities\Collection;
+use App\Utilities\Collection;
 
 class Factory
 {
+    protected $dependencies = [];
+
     public function create($overrides = [], $times = 1)
     {
-        $params    = array_merge($this->defaultValues(), $overrides);
+        $params = array_merge($this->defaultValues(), $overrides);
 
-        foreach ($params as &$param) {
+        foreach ($params as $key => &$param) {
             if (is_callable($param)) {
-                var_dump($param());
-                $param = $param();
+                $this->handleCallable($key, $param);
             }
         }
 
@@ -21,13 +22,26 @@ class Factory
             return $this->createModel($params);
         }
 
-        $collection = new Collection;
+        $collection = new Collection([]);
 
         for ($i = 0; $i < $times; $i++) {
             $collection->append($this->createModel($params));
         }
 
         return $collection;
+    }
+
+    private function handleCallable($key, &$param)
+    {
+        // convert eg post_id to POST
+        $overrideKey = strtoupper(substr($key, 0, -3));
+
+        if (isset($overrides[$overrideKey])) {
+            $param = $param($overrides[$overrideKey]);
+            unset($overrides[$overrideKey]);
+        } else {
+            $param = $param();
+        }
     }
 
     private function createModel($params)

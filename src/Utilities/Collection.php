@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utilites;
+namespace App\Utilities;
 
 class Collection
 {

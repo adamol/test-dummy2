@@ -44,7 +44,7 @@ class Model
 
     private function table()
     {
-        return $this->camelToSnakeCase($this->calledClass());
+        return $this->camelToSnakeCase($this->calledClass()) . 's';
     }
 
     private function columns()
