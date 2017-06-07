@@ -9,4 +9,6 @@ class Post extends Model
     protected $title;
 
     protected $body;
+
+    protected $published;
 }

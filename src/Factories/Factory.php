@@ -8,39 +8,58 @@ class Factory
 {
     protected $dependencies = [];
 
+    protected $stateValues = [];
+
+    public function state($state)
+    {
+        $method = 'state' . ucfirst($state);
+
+        $this->stateValues = $this->$method();
+
+        return $this;
+    }
+
     public function create($overrides = [], $times = 1)
     {
-        $params = array_merge($this->defaultValues(), $overrides);
+        $this->params = array_merge($this->defaultValues(), $overrides);
 
-        foreach ($params as $key => &$param) {
-            if (is_callable($param)) {
-                $this->handleCallable($key, $param);
-            }
-        }
+        $this->overrideStateValues();
+
+        $this->triggerCallbacks();
 
         if ($times === 1) {
-            return $this->createModel($params);
+            return $this->createModel($this->params);
         }
 
         $collection = new Collection([]);
 
         for ($i = 0; $i < $times; $i++) {
-            $collection->append($this->createModel($params));
+            $collection->append($this->createModel($this->params));
         }
 
         return $collection;
     }
 
-    private function handleCallable($key, &$param)
+    private function triggerCallbacks()
     {
-        // convert eg post_id to POST
-        $overrideKey = strtoupper(substr($key, 0, -3));
+        foreach ($this->params as $key => &$param) {
+            if (is_callable($param)) {
+                $overrideKey = strtoupper(substr($key, 0, -3));
 
-        if (isset($overrides[$overrideKey])) {
-            $param = $param($overrides[$overrideKey]);
-            unset($overrides[$overrideKey]);
-        } else {
-            $param = $param();
+                if (isset($this->params[$overrideKey])) {
+                    $param = $param($this->params[$overrideKey]);
+                    unset($this->params[$overrideKey]);
+                } else {
+                    $param = $param();
+                }
+            }
+        }
+    }
+
+    private function overrideStateValues()
+    {
+        if (! empty($this->stateValues)) {
+            $this->params = array_merge($this->params, $this->stateValues);
         }
     }
 

@@ -9,7 +9,15 @@ class PostsFactory extends Factory
         return [
             'id'    => 1,
             'title' => 'Some title',
-            'body'  => 'Lorem ipsum, dolar sit amet...'
+            'body'  => 'Lorem ipsum, dolar sit amet...',
+            'published' => false
+        ];
+    }
+
+    public function stateFoo()
+    {
+        return [
+            'published' => true
         ];
     }
 }
