@@ -34,7 +34,7 @@ $postsFactory->create(['id' => 4], 3)->each(function($post) use ($commentsFactor
 });
 
 echo "\n-- STATES CAN BE ATTACHED TO FACTORIES\n";
-$postsFactory->state('foo')->create();
+$postsFactory->state('published')->create();
 
 // NOT REALLY NECESSARY SINCE IT WOULD BE SOLVED
 // BY THE DATABASE IN THE REAL APPLICATION

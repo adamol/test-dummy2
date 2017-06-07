@@ -14,7 +14,7 @@ class PostsFactory extends Factory
         ];
     }
 
-    public function stateFoo()
+    public function statePublished()
     {
         return [
             'published' => true
