@@ -10,6 +10,13 @@ class Factory
 
     protected $stateValues = [];
 
+    protected $database;
+
+    public function __construct($database)
+    {
+        $this->database = $database;
+    }
+
     public function state($state)
     {
         $method = 'state' . ucfirst($state);
@@ -81,7 +88,7 @@ class Factory
     private function getModelInstance($model)
     {
         $model = 'App\\Models\\'.$model;
-        return new $model;
+        return new $model($this->database);
     }
 
     private function buildModelName()

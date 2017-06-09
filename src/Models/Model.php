@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use App\Database\MockedPdoConnection;
-
 class Model
 {
     protected $attributes = [];
 
     protected $foreign_keys = [];
+
+    protected $database;
+
+    public function __construct($database)
+    {
+        $this->database = $database;
+    }
 
     public function getAttribute($attribute)
     {
@@ -28,7 +33,7 @@ class Model
     {
         $sql = $this->buildInsertQuery();
 
-        return $this->getPdoInstance()
+        return $this->database
              ->prepare($sql)
              ->exec($this->values());
     }
@@ -72,10 +77,5 @@ class Model
     private function calledClass()
     {
         return array_values(array_slice(explode('\\', get_called_class()), -1))[0];
-    }
-
-    private function getPdoInstance()
-    {
-        return new MockedPdoConnection;
     }
 }

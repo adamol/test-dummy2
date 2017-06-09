@@ -13,4 +13,9 @@ class Comment extends Model
     protected $post_id;
 
     protected $body;
+
+    public function post()
+    {
+
+    }
 }
