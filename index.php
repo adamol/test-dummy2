@@ -17,13 +17,27 @@ class FactoriesTest extends TestCase
     {
         parent::setUp();
 
-        $this->postsFactory = new PostsFactory(new MockedPdoConnection);
-        $this->commentsFactory = new CommentsFactory(new MockedPdoConnection);
-    }
-    /** @test */
-    function it_works()
-    {
-        $this->assertTrue(true);
+        $pdo = new PDO('sqlite::memory:');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $pdo->exec("
+            CREATE TABLE posts (
+                id INTEGER AUTO_INCREMENTP RIMARY KEY,
+                title VARCHAR(50),
+                body TEXT NOT NULL
+            )
+        ");
+
+        $pdo->exec("
+            CREATE TABLE comments (
+                id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                post_id INTEGER UNSIGNED NOT NULL,
+                body TEXT NOT NULL,
+            )
+        ");
+
+        $this->postsFactory = new PostsFactory($pdo);
+        $this->commentsFactory = new CommentsFactory($pdo);
     }
 
     /** @test */
@@ -49,7 +63,7 @@ class FactoriesTest extends TestCase
     //    $comment = $this->commentsFactory->create(['post_id' => $post->getAttribute('id')]);
 
     //    $this->assertTrue($comment->post() instanceof Post);
-    //    $this->assertEquals($post->id, $comment->post()->id);
+    //    $this->assertEquals($post->getAttribute('id'), $comment->post()->getAttribute('id'));
     //}
 
     ///** @test */
@@ -98,9 +112,4 @@ class FactoriesTest extends TestCase
     }
 }
 
-
-//echo "\n-- CREATING MULTIPLE CREATES COLLECION AND HAS EACH FUNCTION \n";
-//
-//echo "\n-- STATES CAN BE ATTACHED TO FACTORIES\n";
-//$postsFactory->state('published')->create();
 
