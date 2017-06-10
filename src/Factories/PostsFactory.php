@@ -7,17 +7,16 @@ class PostsFactory extends Factory
     public function defaultValues()
     {
         return [
-            'id'    => 1,
             'title' => 'Some title',
             'body'  => 'Lorem ipsum, dolar sit amet...',
-            'published' => false
+            'published' => 0
         ];
     }
 
     public function statePublished()
     {
         return [
-            'published' => true
+            'published' => 1
         ];
     }
 }

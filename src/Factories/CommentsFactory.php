@@ -11,9 +11,8 @@ class CommentsFactory extends Factory
     public function defaultValues()
     {
         return [
-            'id' => 1,
-            'post_id' => function($overrides = []) {
-                $postsFactory = new PostsFactory;
+            'post_id' => function($overrides = [], $dbh) {
+                $postsFactory = new PostsFactory($dbh);
 
                 return $postsFactory->create($overrides)->getAttribute('id');
             },

@@ -25,4 +25,11 @@ class Collection implements \IteratorAggregate
     {
         $this->entities[] = $entity;
     }
+
+    public function pluck($field)
+    {
+        return array_map(function($entity) use ($field) {
+            return $entity->getAttribute($field);
+        }, $this->entities);
+    }
 }

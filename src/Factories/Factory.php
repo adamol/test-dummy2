@@ -35,13 +35,13 @@ class Factory
         $this->triggerCallbacks();
 
         if ($times === 1) {
-            return $this->createModel($this->params);
+            return $this->createModel();
         }
 
         $collection = new Collection([]);
 
         for ($i = 0; $i < $times; $i++) {
-            $collection->append($this->createModel($this->params));
+            $collection->append($this->createModel());
         }
 
         return $collection;
@@ -54,10 +54,10 @@ class Factory
                 $overrideKey = strtoupper(substr($key, 0, -3));
 
                 if (isset($this->params[$overrideKey])) {
-                    $param = $param($this->params[$overrideKey]);
+                    $param = $param($this->params[$overrideKey], $this->database);
                     unset($this->params[$overrideKey]);
                 } else {
-                    $param = $param();
+                    $param = $param([], $this->database);
                 }
             }
         }
@@ -70,17 +70,19 @@ class Factory
         }
     }
 
-    private function createModel($params)
+    private function createModel()
     {
         $model = $this->getModelInstance($this->buildModelName());
 
-        foreach ($params as $attribute => $value) {
+        foreach ($this->params as $attribute => $value) {
             $model->setAttribute($attribute, $value);
         }
 
-        if (! $model->save()) {
+        if (! $id = $model->save()) {
             throw new \Exception("Something went wrong");
         }
+
+        $model->setAttribute('id', $id);
 
         return $model;
     }

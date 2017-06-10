@@ -18,7 +18,7 @@ class Model
     public function getAttribute($attribute)
     {
         if (property_exists(get_called_class(), $attribute)) {
-            return $this->attributes[$attribute];
+            return $this->$attribute;
         }
     }
 
@@ -26,6 +26,8 @@ class Model
     {
         if (property_exists(get_called_class(), $attribute)) {
             $this->attributes[$attribute] = $value;
+
+            $this->$attribute = $value;
         }
     }
 
@@ -33,9 +35,15 @@ class Model
     {
         $sql = $this->buildInsertQuery();
 
-        return $this->database
+        $ok = $this->database
              ->prepare($sql)
-             ->exec($this->values());
+             ->execute($this->values());
+
+        if (! $ok) {
+            return $ok;
+        }
+
+        return $this->database->lastInsertId();
     }
 
     private function buildInsertQuery()
