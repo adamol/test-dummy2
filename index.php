@@ -17,6 +17,8 @@ class FactoriesTest extends TestCase
     {
         parent::setUp();
 
+        putenv("env=test");
+
         $this->dbh = PdoConnection::getInstance();
 
         $this->dbh->exec("

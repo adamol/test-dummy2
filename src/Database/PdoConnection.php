@@ -12,7 +12,12 @@ class PdoConnection
 
     private function __construct()
     {
-        $this->dbh = new PDO('sqlite::memory:');
+        if (getenv('env') == 'test') {
+            $this->dbh = new PDO('sqlite::memory:');
+        } elseif (getenv('env') == 'prod') {
+            // just trying stuff out
+            $this->dbh = new PDO('mysql:host=localhost;dbname=test', 'user', 'pass');
+        }
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
