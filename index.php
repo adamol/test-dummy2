@@ -3,6 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Utilities\Collection;
+use App\Database\PdoConnection;
 use PHPUnit\Framework\TestCase;
 use App\Factories\CommentsFactory;
 use App\Factories\PostsFactory;
@@ -16,8 +17,7 @@ class FactoriesTest extends TestCase
     {
         parent::setUp();
 
-        $this->dbh = new PDO('sqlite::memory:');
-        $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->dbh = PdoConnection::getInstance();
 
         $this->dbh->exec("
             CREATE TABLE posts (
@@ -36,8 +36,16 @@ class FactoriesTest extends TestCase
             )
         ");
 
-        $this->postsFactory = new PostsFactory($this->dbh);
-        $this->commentsFactory = new CommentsFactory($this->dbh);
+        $this->postsFactory = new PostsFactory();
+        $this->commentsFactory = new CommentsFactory();
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        $this->dbh->exec("drop table posts");
+        $this->dbh->exec("drop table comments");
     }
 
     /** @test */

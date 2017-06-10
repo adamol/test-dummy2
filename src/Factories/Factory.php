@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Utilities\Collection;
+use App\Database\PdoConnection;
 
 class Factory
 {
@@ -12,9 +13,9 @@ class Factory
 
     protected $database;
 
-    public function __construct($database)
+    public function __construct()
     {
-        $this->database = $database;
+        $this->database = PdoConnection::getInstance();
     }
 
     public function state($state)
